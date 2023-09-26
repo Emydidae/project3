@@ -1,8 +1,11 @@
 # Project 3 - California Rainfall vs. Wildfire Analysis
 
 Timothy Coleman
+
 Natalie Ericson
+
 Ralph Gaston
+
 Peter Solis
 
 ### Project Overview
