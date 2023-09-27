@@ -13,3 +13,6 @@ https://docs.google.com/document/d/1EbH2bQ_-GGIEymq9qHdc8dFXurmZHvXkJpHnP-el3ns/
 - SQL Database - Tim
 - SQL Database Backup & Presentation - Natalie
 - Main Website / Visuals - Collaborative In-Class
+
+### Sources:
+- https://cdec.water.ca.gov/
