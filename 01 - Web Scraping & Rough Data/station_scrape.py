@@ -40,4 +40,4 @@ for s in stations:
             
 # create dataframe, export
 rain_station_df = pd.DataFrame(station_data, columns = ['Station ID', 'Station Name', 'Longitude', 'Latitude', 'Elevation', 'Link'])
-rain_station_df.to_csv(f'{pathStub}Rough Data/rain_stations.csv')
+rain_station_df.to_csv(f'{pathStub}Rough Data/rain_stations.csv', index = False)
