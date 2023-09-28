@@ -126,5 +126,6 @@ rainfall_df = pd.DataFrame(rain_data, columns = ['Station ID', 'Precipitation (I
 rainfall_df['Station ID'].replace('LSB', 'LBS', inplace = True) # this station seems to have a different ID now, this updates that
 rainfall_df.sort_values(['Station ID','Year','Month'], inplace = True)
 rainfall_df.reset_index(inplace = True, drop = True)
+rainfall_df.reset_index(inplace = True, names = 'index_num')
 pathStub = (__file__).replace('rainfall_scrape.py', '')
-rainfall_df.to_csv(f'{pathStub}Rough Data/rainfall.csv')
+rainfall_df.to_csv(f'{pathStub}Rough Data/rainfall.csv', index = False)
