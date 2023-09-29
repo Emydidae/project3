@@ -24,5 +24,9 @@ rain_df.rename(columns = {'index_num':'Index_Num',
                           'Percent of Average':'Avg_Pcpn_Percent'}, inplace = True)
 # reset index
 rain_df.set_index('Index_Num', drop = True, inplace = True)
+# drop if no average
+rain_df.dropna(subset = ['Avg_Pcpn'], inplace = True)
 # export rainfall
-rain_stat_df.to_csv(f'{pathStub}Clean Data/rainfall.csv')
+rain_df.to_csv(f'{pathStub}Clean Data/rainfall.csv')
+print('Done.')
+

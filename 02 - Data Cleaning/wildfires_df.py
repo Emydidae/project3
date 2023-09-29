@@ -17,6 +17,9 @@ wildfires_clean_df['Start_Date'] = pd.to_datetime(wildfires_clean_df['Start_Date
 wildfires_clean_df['Month'] = wildfires_clean_df['Start_Date'].dt.month
 wildfires_clean_df['Year'] = wildfires_clean_df['Start_Date'].dt.year
 
+# remove duplicates
+wildfires_clean_df.drop_duplicates(inplace = True)
+
 wildfires_clean_df = wildfires_clean_df.drop(columns=['Start_Date'])
 
 wildfires_clean_df.to_csv("Clean Data/wildfires.csv", index=False, header=True)
