@@ -1,4 +1,4 @@
-Acres Burned,CalFire Incident,Latitude,Longitude,UniqueId,Month,Year
+Acres_Burned,Cal_Fire_Incident,Latitude,Longitude,Unique_ID,Month,Year
 257314.0,True,37.857,-120.086,5fb18d4d-213f-4d83-a179-daaf11939e78,8,2013
 30274.0,True,34.585595,-118.423176,bf37805e-1cc2-4208-9972-753e47874c87,5,2013
 27531.0,True,33.7095,-116.72885,a3149fec-4d48-427c-8b2c-59e8b79d59db,7,2013

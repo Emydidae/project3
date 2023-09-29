@@ -19,4 +19,4 @@ wildfires_clean_df['Year'] = wildfires_clean_df['Start_Date'].dt.year
 
 wildfires_clean_df = wildfires_clean_df.drop(columns=['Start_Date'])
 
-wildfires_clean_df.to_csv("wildfires.csv", index=False, header=True)
+wildfires_clean_df.to_csv("Clean Data/wildfires.csv", index=False, header=True)
