@@ -8,15 +8,15 @@ wildfires_df = pd.read_csv(wildfires)
 ## acres burned, calfire incident, started, lon, lat
 wildfires_clean_df = wildfires_df[['AcresBurned', 'CalFireIncident', 'Started', 'Latitude', 'Longitude', 'UniqueId']]
 
-wildfires_clean_df.rename(columns={'AcresBurned': 'Acres Burned', 'CalFireIncident': 'CalFire Incident', 'Started': 'Start Date'}, inplace=True)
+wildfires_clean_df.rename(columns={'AcresBurned': 'Acres_Burned', 'CalFireIncident': 'Cal_Fire_Incident', 'Started': 'Start_Date', 'UniqueId': 'Unique_ID'}, inplace=True)
 
 # convert datetime column to string
-wildfires_clean_df['Start Date'] = wildfires_clean_df['Start Date'].str[:10]
-wildfires_clean_df['Start Date'] = pd.to_datetime(wildfires_clean_df['Start Date'], format='%Y-%m-%d')
+wildfires_clean_df['Start_Date'] = wildfires_clean_df['Start_Date'].str[:10]
+wildfires_clean_df['Start_Date'] = pd.to_datetime(wildfires_clean_df['Start_Date'], format='%Y-%m-%d')
 
-wildfires_clean_df['Month'] = wildfires_clean_df['Start Date'].dt.month
-wildfires_clean_df['Year'] = wildfires_clean_df['Start Date'].dt.year
+wildfires_clean_df['Month'] = wildfires_clean_df['Start_Date'].dt.month
+wildfires_clean_df['Year'] = wildfires_clean_df['Start_Date'].dt.year
 
-wildfires_clean_df = wildfires_clean_df.drop(columns=['Start Date'])
+wildfires_clean_df = wildfires_clean_df.drop(columns=['Start_Date'])
 
 wildfires_clean_df.to_csv("wildfires.csv", index=False, header=True)
