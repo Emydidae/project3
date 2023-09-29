@@ -18,7 +18,7 @@ for y in years:
         page = rq.get(f'{base_url}{y}08')
     soup = BeautifulSoup(page.content, 'html.parser')
 # get each table
-    table_list = soup.find_all('table', class_ = 'data left')
+    table_list = soup.find_all('table', class_ = 'data')
     tables.extend(table_list)
 # keep track of year for each table
     table_years.extend([y for table in table_list])
