@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
 from flask_cors import CORS
+import calendar
 
 # get path
 pathStub = (__file__).replace('app.py', '')
@@ -68,11 +69,24 @@ def monthly_rain(year):
     the given year.
     """
     # query to get rainfall.Month and average rainfall.PcpnIn for each month
+    to_query = [rainfall.Month,
+                func.avg(rainfall.Pcpn_In)]
+    
+    # search getting the wildfire data within the given year's fire season (june to nov)
     # filter by Year, group by Month, sort by Month
+    monthly_rain = session.query(*to_query).filter(rainfall.Year == int(year)).group_by(rainfall.Month).order_by(rainfall.Month.asc())
 
     # iterate through the response, making each month into a dictionary and adding it to a list
-
-    return # list of dictionaries
+    monthly_rain_response = []
+    for item in monthly_rain:
+        month_name = calendar.month_name[item[0]]
+        monthly_rain_response.append({
+            'month': month_name,
+            'avg_rainfall': item[1]
+        })
+        
+    # return list of dictionaries??
+    return monthly_rain_response
 
 def monthly_fire(year):
     """
@@ -80,11 +94,25 @@ def monthly_fire(year):
     month of the given year.
     """
     # query to get wildfires.Month, average wildfires.Acres_Burned, and # (count) of wildfires for each month
+    to_query = [wildfires.Month,
+                func.avg(wildfires.Acres_Burned),
+                func.count(wildfires.Unique_ID)]
+    
     # filter by Year, group by Month, sort by Month
+    monthly_fires = session.query(*to_query).filter(wildfires.Year == int(year)).group_by(wildfires.Month).order_by(wildfires.Month.asc())
 
     # iterate through the response, making each month into a dictionary and adding it to a list
+    monthly_fire_response = []
+    for item in monthly_fires:
+        month_name = calendar.month_name[item[0]]
+        monthly_fire_response.append({
+            'month': month_name,
+            'avg_acres_burned': item[1],
+            'num_of_fires': item[2]
+        })
 
-    return # list of dictionaries
+    # return list of dictionaries??
+    return monthly_fire_response
 
 #################################################
 # Flask Routes
@@ -197,10 +225,15 @@ def rain_bar(year = 2013):
         print(f'Looking for rain by month in {year}...')
     except:
         year = 0
-    # call function to get list of dictionaries of data for the given year
-    # <response variable> = monthly_rain(year)
 
-    return # jsonified list of dicts (may want to include a check to make sure data was received)
+    # call function to get list of dictionaries of data for the given year
+    monthly_rain_table = monthly_rain(year)
+
+    if len(monthly_rain_table) == 0:
+        raise Exception('Monthly rain data is missing rows')
+    
+    # return jsonified list of dicts (may want to include a check to make sure data was received)
+    return jsonify(monthly_rain_table)
 
 
 @app.route('/fire_bar/<year>') # --------------------------------------------------------------------------------------------------------------------
@@ -217,10 +250,15 @@ def fire_bar(year = 2013):
         print(f'Looking for fires by month in {year}...')
     except:
         year = 0
-    # call function to get list of dictionaries of data for the given year
-    # <response variable> = monthly_fire(year)
 
-    return # jsonified list of dicts (may want to include a check to make sure data was received)
+    # call function to get list of dictionaries of data for the given year
+    monthly_fire_table = monthly_fire(year)
+
+    if len(monthly_fire_table) == 0:
+        raise Exception('Monthly fire data is missing rows')
+    
+    # return jsonified list of dicts (may want to include a check to make sure data was received)
+    return jsonify(monthly_fire_table)
 
 @app.route('/month_line') # --------------------------------------------------------------------------------------------------------------------
 def month_line():
