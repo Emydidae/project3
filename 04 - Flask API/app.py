@@ -82,10 +82,11 @@ def monthly_rain(year):
         month_name = calendar.month_name[item[0]]
         monthly_rain_response.append({
             'month': month_name,
-            'avg_rainfall': item[1]
+            'month_num': item[0],
+            'avg_rainfall': round(item[1], 2)
         })
         
-    # return list of dictionaries??
+    # return list of dictionaries
     return monthly_rain_response
 
 def monthly_fire(year):
@@ -107,12 +108,28 @@ def monthly_fire(year):
         month_name = calendar.month_name[item[0]]
         monthly_fire_response.append({
             'month': month_name,
-            'avg_acres_burned': item[1],
+            'month_num': item[0],
+            'avg_acres_burned': round(item[1], 2),
             'num_of_fires': item[2]
         })
 
-    # return list of dictionaries??
+    # return list of dictionaries
     return monthly_fire_response
+
+def data_years():
+    """
+    Returns list of years with data in both charts.
+    """
+    # build queries
+    rain_years = session.query(rainfall.Year).\
+                    group_by(rainfall.Year).\
+                    order_by(rainfall.Year.asc())
+    fire_years = session.query(wildfires.Year).\
+                    group_by(wildfires.Year).\
+                    order_by(wildfires.Year.asc())
+    # compare & return
+    years = [yr[0] for yr in rain_years if yr in fire_years]
+    return years
 
 #################################################
 # Flask Routes
@@ -123,11 +140,22 @@ def welcome():
     # list available routes on homepage
     return (
         f'Available Routes:<br/>'
+        f'/years - Returns all years with both fire and rainfall data.<br/>'
         f'/map_markers/YYYY - Returns all data points for fires and data for precipitation befor the fire season for year YYYY (2013-2019).<br/>'
         f'/rain_bar/YYYY - Returns average precipitation stats per month in the year YYYY (2013-2019).<br/>'
         f'/fire_bar/YYYY - Returns number of fires & average size of fires per month in the year YYYY (2013-2019).<br/>'
         f'/month_line - Returns monthly precipitation and fire stats per month over the entire dataset (2013-2019).<br/>'
     )
+
+@ app.route('/years') # -----------------------------------------------------------------------------------------------------------------------------
+def year_list():
+    """
+    Queries for list of all years that have data for rainfall
+    and wildfires, then compares and returns list of years with
+    data for both.
+    """
+    # get list from data_years function and return it
+    return jsonify(data_years())
 
 @app.route('/map_markers/<year>') # -----------------------------------------------------------------------------------------------------------------
 def map_markers(year = 2013):
@@ -201,7 +229,8 @@ def map_markers(year = 2013):
             'Acres_Burned': item[0],
             'Latitude': item[1],
             'Longitude': item[2],
-            'Month': item[3],
+            'Month': calendar.month_name[item[3]],
+            'month_num': item[3],
             'Year': item[4]
         })
     # if there isn't data for one of the sets in that year, return a message saying as much
@@ -230,7 +259,7 @@ def rain_bar(year = 2013):
     monthly_rain_table = monthly_rain(year)
 
     if len(monthly_rain_table) == 0:
-        raise Exception('Monthly rain data is missing rows')
+        return 'Monthly rain data is missing rows'
     
     # return jsonified list of dicts (may want to include a check to make sure data was received)
     return jsonify(monthly_rain_table)
@@ -255,7 +284,7 @@ def fire_bar(year = 2013):
     monthly_fire_table = monthly_fire(year)
 
     if len(monthly_fire_table) == 0:
-        raise Exception('Monthly fire data is missing rows')
+        return 'Monthly fire data is missing rows'
     
     # return jsonified list of dicts (may want to include a check to make sure data was received)
     return jsonify(monthly_fire_table)
@@ -268,41 +297,52 @@ def month_line():
     average ACTUAL rainfall (average of Pcpn_In), monthly average
     acres burned, and number (count) of wildfires for use in the
     line graph (3 - 5 data points per month, as some may have no
-    fire data, JSON format).
+    fire data, JSON format). Splitting these into separate lists,
+    so that each can basically be put directly into plotly.
     """
     # don't worry about doing this one, it's spaghetti code before anything's even coded and I'll definitely have time to do it
     print('Looking for data by month across the dataset...')
-    # iterate through each of the years in the dataset (2013 THROUGH 2019)
+    # create list to iterate through each of the years in the dataset (2013 THROUGH 2019)
+    year_list = data_years()
 
-        # for each year, call functions to get query for fire and rain data for that year
-        # <response variable> = monthly_rain(year)
-        # <response variable> = monthly_fire(year)
-
-        # combining these two into one dictionary will be hard since either dataset might be missing
-        # some months of data in any given year, and we want to return them in a list so that the order
-        # goes through to the javascript so we don't have to resort using the year and months before 
-        # making the line graph.
-        # the best way I can think of looks like this:
-        # first, before calling for any data, make a huge dictionary with each month/year combo as a key leading
-        # to a smaller dict, which might look like this:
-        #   full_dict = {}
-        #   for y in range(2013,2020):                      
-        #       for m in range(1,13):
-        #           key = y * 100 + m                       # results in key looking like YYYYMM
-        #           full_dict[f'{key}'] = {'Year': y}
-        # now that you've got the structure, you can loop through years, make the function calls, then
-        # iterate through each result and add the info for each one
-        #   for item in <fire_response_variable>:
-        #       key = year * 100 + item['Month']
-        #       joint_dict[f'{key}'].update(item)           # this adds the key-value pairs to the already-existing dictionary we made 5 lines above this
-        # then you'd repeat that for the rain response so you now have a dictionary where the keys are YYYYMM and
-        # the values are a dictionary of all data for that YYYYMM combo, so we can iterate through like 10
-        # lines above (maybe just use [(y * 100) + m for y in range(2013, 2020)for m in range(1,13)] to make
-        # a list of keys to iterate through rather than 2 for loops both times), appending each key in order
-        # to a list.
-        # probably a very inefficient way to do it but it's the best solution I can come up with lol
-
-    return # jsonified list of dicts
+    # iterate through, splitting the data points for different lines to different lists
+    fire_counts = []
+    avg_fire = []
+    avg_rain = []
+    for yr in year_list:
+        # get year's-worth of data
+        rain_data = monthly_rain(yr)
+        fire_data = monthly_fire(yr)
+        # add the rain data for each month to the list
+        for item in rain_data:
+            avg_rain.append({
+                'avg_rainfall': item['avg_rainfall'],
+                'month': item['month'],
+                'month_num': item['month_num'],
+                'year': yr
+            })
+        # add the fire data for each month to the respective list
+        for item in fire_data:
+            avg_fire.append({
+                'avg_acres_burned': item['avg_acres_burned'],
+                'month': item['month'],
+                'month_num': item['month_num'],
+                'year': yr
+            })
+            fire_counts.append({
+                'num_of_fires': item['num_of_fires'],
+                'month': item['month'],
+                'month_num': item['month_num'],
+                'year': yr
+            })
+    # create final dictionary of data points to return
+    line_data = {
+        'fire_counts': fire_counts,
+        'avg_fire': avg_fire,
+        'avg_rain': avg_rain
+    }
+    # jsonified dict of lists of dicts (each item in top dict is a line, each dict in that list is a point)
+    return jsonify(line_data)
 
 
 # run app on startup
