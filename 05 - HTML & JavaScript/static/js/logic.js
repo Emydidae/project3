@@ -26,7 +26,7 @@ function make_tiles() {
 
 function rain_color(d) {
     return d > 200 ? '#084594':
-           d > 180 ? '#2171B5':
+           d > 175 ? '#2171B5':
            d > 150 ? '#4292C6':
            d > 125 ? '#6BAED6':
            d > 100 ? '#9ECAE1':
