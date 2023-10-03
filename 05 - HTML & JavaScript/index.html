@@ -5,12 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>California Rainfall vs. Wildfires</title>
+</head>
+
+<body>
+    <!-- year dropdown menu -->
+    <h3>Select a Year:</h3>
+    <select id="sel_year">
+    </select>
+    <!-- titles -->
+    <div id="title_holder">
+        <h2 id="rain_title"></h2>
+        <h2 id="fire_title"></h2>
+        <div class="end_block"></div>
+    </div>
+    <!-- The div that holds our maps -->
+    <div id="map_holder">
+        <div id="rain_map"></div>
+        <div id="fire_map"></div>
+        <div class="end_block"></div>
+    </div>
+    <!-- map info -->
+    <div id="info">
+        <ul id="rain_i">
+            <li>Circle size represents amount of precipitation during the rainy season (bigger = more rain).</li>
+            <li>Darkness of circle represents % of average precipitation for the season (darker = more rain than usual).</li>
+            <li><a href='https://cdec.water.ca.gov/'>Data Source</a></li>
+            <li>Note: Density of circles just shows density of stations where data was measured, so low density does not mean low precipitation.</li>
+        </ul>
+        <ul id="fire_i">
+            <li>Circle size represents # of acres burned</li>
+            <li><a href='https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv'>Dataset</a></li>
+            <li><a href='https://www.fire.ca.gov/incidents/'>Data Source</a></li>
+        </ul>
+        <div class="end_block"></div>
+    </div>
+    <!-- The div that holds our bar charts -->
+    <div id="bar_holder">
+        <div id="rain_bar"></div>
+        <div id="fire_bar1"></div>
+        <div id="fire_bar2"></div>
+        <div class="end_block"></div>
+    </div>
+    <!-- The div that holds our line graph -->
+    <div id="line"></div>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin="" />
-
     <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!-- Leaflet JavaScript code -->
@@ -25,23 +67,4 @@
     <script type="text/javascript" src="static/js/L.Map.Sync.js"></script>
     <!-- Our CSS -->
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
-</head>
-
-<body>
-
-    <!-- year dropdown menu -->
-    <select id="sel_year" onchange="optionChanged(this.value)">
-    </select>
-    <!-- The div that holds our maps -->
-    <div id="map_holder">
-        <div id="rain_map"></div>
-        <div id="fire_map"></div>
-    </div>
-    <!-- The div that holds our bar charts -->
-    <div id="bar_holder">
-        <div id="rain_bar"></div>
-        <div id="fire_bar"></div>
-    </div>
-    <!-- The div that holds our line graph -->
-    <div id="line"></div>
 </body>
