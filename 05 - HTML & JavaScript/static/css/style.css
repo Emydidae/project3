@@ -3,11 +3,17 @@ body, html {
 }
 
 #map_holder {
-  height: 60%;
+  height: 55%;
   width: 100%;
 }
 
-#rain_map, #fire_map {
+#rain_map, #fire_map, #rain_bar, #fire_bar {
   height: 100%;
   width: 50%;
+  float: left;
+}
+
+#bar_holder {
+  height: 40%;
+  width: 100%;
 }
