@@ -1,7 +1,7 @@
 // use these to test the different endpoints
 // d3.json('http://127.0.0.1:5000/map_markers/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/rain_bar/2017').then(data => {console.log(data);});
-// d3.json('http://127.0.0.1:5000/fire_bar/2017').then(data => {console.log(data);});
+d3.json('http://127.0.0.1:5000/fire_bar/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/month_line').then(data => {console.log(data);});
 
 // background layer of maps
@@ -43,12 +43,12 @@ function rain_markers(rain_data) {
     for (let i = 0; i < rain_data.length; i++) {
         // format popup text
         let popup_text = `<h3>${rain_data[i].Station_ID} - ${rain_data[i].Station_Name}</h3>\
-<hr><p>Latitude - ${rain_data[i].Latitude}<br>
-Longitude - ${rain_data[i].Longitude}<br>
-Total Pcpn (in) - ${rain_data[i].total_pcpn_inches}<br>
-Total Expected Pcpn - ${rain_data[i].total_expected_pcpn}<br>
-% of Expected - ${rain_data[i].percent_avg_pcpn}<br>
-# Months Measured - ${rain_data[i].months_measured}<br>
+<hr><p>Latitude: ${rain_data[i].Latitude}<br>
+Longitude: ${rain_data[i].Longitude}<br>
+Total Pcpn (in): ${rain_data[i].total_pcpn_inches}<br>
+Total Expected Pcpn: ${rain_data[i].total_expected_pcpn}<br>
+% of Expected: ${rain_data[i].percent_avg_pcpn}<br>
+# Months Measured: ${rain_data[i].months_measured}<br>
 <a href = '${rain_data[i].info_link}'>More Info</a></p>`;
         // create marker, add popup text to it
         let marker = L.circle([rain_data[i].Latitude, rain_data[i].Longitude], {
@@ -69,6 +69,36 @@ Total Expected Pcpn - ${rain_data[i].total_expected_pcpn}<br>
     return rain_overlay;
 };
 
+// make markers for the fire map
+function fire_markers(fire_data) {
+    // empty list to hold markers
+    let fire_markers = [];
+    // loop through data and make markers
+    for (let i = 0; i < fire_data.length; i++) {
+        // format popup text
+        let popup_text = `<p>Acres Burned: ${fire_data[i].Acres_Burned}<br>\
+Latitude: ${fire_data[i].Latitude}<br>
+Longitude: ${fire_data[i].Longitude}<br>
+Month: ${fire_data[i].Month}<br>
+Year: ${fire_data[i].Year}<br></p>`;
+        // create marker, add the popup text to it
+        let marker = L.circle([fire_data[i].Latitude, fire_data[i].Longitude], {
+            color: 'black',
+            // size = acres burned
+            radius : fire_data[i].Acres_Burned,
+            fillColor: '#d94801',
+            fillOpacity: 0.75,
+            opacity: 1,
+            weight: 1
+        }).bindPopup(popup_text);
+        // add marker to list
+        fire_markers.push(marker);
+        };
+        // make overlay map layer for the fire map
+        let fire_overlay = L.layerGroup(fire_markers);
+        return fire_overlay;
+    };
+
 // make the rain map chart
 function make_maps(year) {
     // make url & call for map marker data
@@ -81,7 +111,7 @@ function make_maps(year) {
         // get rain data
         let rain_data = data.rain_data;
         // get markers
-        let rain_overlay = rain_markers(rain_data)
+        let rain_overlay = rain_markers(rain_data);
         // format map
         let rain_map = L.map('rain_map', {
             center: [38, -120],
@@ -98,12 +128,12 @@ function make_maps(year) {
         // get fire data
         let fire_data = data.fire_data;
         // get markers
-        let fire_overlay = rain_markers(rain_data) // USING RAIN DATA RIGHT NOW FOR TESTING, NEED TO CODE A FUNCTION TO GET THE FIRE MARKERS - MARKER SIZE SHOULD INCREASE RELATIVE TO ACRES BURNED
+        let fire_overlay = fire_markers(fire_data);
         // format fire map
         let fire_map = L.map('fire_map', {
             center: [38, -120],
             zoom: 6,
-            layers: [base_maps_2['Street'], fire_overlay]         // change this when we get the fire marker overlay made
+            layers: [base_maps_2['Street'], fire_overlay] 
         });
         // add layer control
         L.control.layers(base_maps_2).addTo(fire_map);
@@ -138,15 +168,38 @@ function make_rain_bar(year) {
 // make the fire bar chart
 function make_fire_bar(year) {
     // make url & call for data
-
+    let url = `http://127.0.0.1:5000/fire_bar/${year}`
         // make trace with x being the month and 2 different y axes - avg acres burned and number of fires
                 // https://plotly.com/javascript/bar-charts/
                 // https://plotly.com/javascript/multiple-axes/ - some resources on how to do multiple bars
+    d3.json(url).then(data => {
+        // make trace for y axis 1
+        let trace1 = [{
+            x: data.map(item => {return item.month}),
+            y: data.map(item => {return item.avg_acres_burned}),
+            text: data.map(item => {return `Average Acres Burned`}),
+            type: 'bar'
+        }];
+        
+        // make trace for y axis 2
+        let trace2 = [{
+            x: data.map(item => {return item.month}),
+            y: data.map(item => {return item.num_of_fires}),
+            text: data.map(item => {return `Number of Fires`}),
+            type: 'bar'
+        }];
 
         // give name
+        let layout = {
+            title: `Monthly Fire Statistics in California - ${year}`,
+            yaxis: {title: 'Acres Burned'},
+            yaxis2: {title: 'Number of Fires',
+                    side: 'right'}
+        };
 
-        // make chart with ID 'fire_bar'
-
+        // make chart
+        Plotly.newPlot('rain_bar', [trace1, trace2], layout);
+    });
 };
 
 function make_line() {
