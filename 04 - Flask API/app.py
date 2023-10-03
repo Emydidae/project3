@@ -141,7 +141,7 @@ def welcome():
     return (
         f'Available Routes:<br/>'
         f'/years - Returns all years with both fire and rainfall data.<br/>'
-        f'/map_markers/YYYY - Returns all data points for fires and data for precipitation befor the fire season for year YYYY (2013-2019).<br/>'
+        f'/map_markers/YYYY - Returns all data points for fires and data for precipitation before the fire season for year YYYY (2013-2019).<br/>'
         f'/rain_bar/YYYY - Returns average precipitation stats per month in the year YYYY (2013-2019).<br/>'
         f'/fire_bar/YYYY - Returns number of fires & average size of fires per month in the year YYYY (2013-2019).<br/>'
         f'/month_line - Returns monthly precipitation and fire stats per month over the entire dataset (2013-2019).<br/>'
