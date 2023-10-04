@@ -2,7 +2,7 @@
 // d3.json('http://127.0.0.1:5000/map_markers/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/rain_bar/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/fire_bar/2017').then(data => {console.log(data);});
-// d3.json('http://127.0.0.1:5000/month_line').then(data => {console.log(data);});
+d3.json('http://127.0.0.1:5000/month_line').then(data => {console.log(data);});
 
 // MAPS ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -145,6 +145,22 @@ function make_maps(year) {
         // add layer control
         L.control.layers(base_maps_2).addTo(fire_map);
 
+        // Create the legend
+        let legend = L.control({position: "bottomright"});
+        // define grades for legend and add to HTML division
+        legend.onAdd = function(rain_map) {
+        let div = L.DomUtil.create("div", "legend"),
+        grades = [0, 25, 50, 75, 100, 125, 150];
+        for (let i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+            '<i style="background:' + rain_color(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            }
+            return div;
+        };
+        // Add legend to rain map
+        legend.addTo(rain_map);
+
         // Use sync plugin to synchronize maps
         rain_map.sync(fire_map);
         fire_map.sync(rain_map);
@@ -196,7 +212,7 @@ function make_fire_bars(year) {
         let trace2 = {
             x: data.map(item => {return item.month}),
             y: data.map(item => {return item.num_of_fires}),
-            name: 'Fires',
+            text: data.map(item => {return 'Fires'}),
             type: 'bar',
             marker: {
               color: '#d94801'
@@ -225,66 +241,59 @@ function make_line() {
         // make trace for each of the 3 arrays for the line graph
         // use the map function to get month data for x and the specific data point for y
         // since some will have gaps in the data, make sure to set connectgaps to false (see https://plotly.com/javascript/line-charts/#connect-gaps-between-data)
-        trace1 = {let trace1 = [{
-            x: data.map(item => {return item.month}),
-            y: data.map(item => {return item.avg_rainfall}),
-            text: data.map(item => {return `Inches`}),
-            type: 'line',}
+        let prcp = data.avg_rain
+        let trace1 = {
+            x: prcp.map(item => {return item.month}),
+            y: prcp.map(item => {return item.avg_rainfall}),
+            text: prcp.map(item => {return `Inches`}),
+            name: 'Avg. Precipitation',
+            type: 'scatter'
+        };
+        let fire_acres = data.avg_fire
+        let trace2 = {
+            x: fire_acres.map(item => {return item.month}),
+            y: fire_acres.map(item => {return item.avg_acres_burned}),
+            text: fire_acres.map(item => {return 'Average Acres Burned'}),
+            name: 'Avg. Acres Burned',
+            type: 'scatter',
+            yaxis: 'y2',
+            connectgaps: false
+        };
+        let fire_counts = data.fire_counts
+        let trace3 = {
+            x: fire_counts.map(item => {return item.month}),
+            y: fire_counts.map(item => {return item.num_of_fires}),
+            text: fire_counts.map(item => {return 'Fires'}),
+            name: '# of Fires',
+            type: 'scatter',
+            yaxis: 'y2',
+            connectgaps: false
+        };
+        let traces = [trace1, trace2, trace3];
 
-        trace2 = {let trace2 = {
-            x: data.map(item => {return item.month}),
-            y: data.map(item => {return item.num_of_fires}),
-            name: 'Fires',
-            type: 'bar',
-            marker: {
-              color: 
-            };
-
-        trace3 = {}
-        data = [trace1, trace2, trace3]
         // make a single layout variable with info for each y axis (https://plotly.com/javascript/multiple-axes/)
         // you don't need all the info from that for each axis, but you should make sure to give a title and say which side the axis should appear on (rain info on left, fire stuff on the right)
-
-
-        layout = {title: `Monthly # of Fires in CA - ${year}`},
-
-        yaxis: {
-
-            title: ‘of precipitation’,
-        
-             },
-        
-          yaxis2: {
-        
-            title: ‘Of Fires’,
-        
-            anchor: 'free',
-        
-            overlaying: 'y',
-        
-            side: 'left',
-        
-            position: 0.15
-        
-          },
-        
-          yaxis3: {
-        
-            title: ‘acres Burned’,
-        
-            anchor: 'free',
-        
-            overlaying: 'y',
-        
-            side: 'left',
-        
-            position: 0.15
-        
-          },
-       
+        let layout = {title: 'Monthly Precipitation and Wildfire Trends (2013-2019)',
+            yaxis: {
+                title: 'Avg. Precipitation',
+            },
+            yaxis2: {
+                title: 'Avg. Acres Burned',
+                anchor: 'x',
+                overlaying: 'y',
+                side: 'right'
+            },
+            yaxis3: {
+                title: '# of Fires',
+                anchor: 'free',
+                overlaying: 'y',
+                side: 'right',
+                position: 0.15
+            }
+        };
        
         // make graph
-        Plotly.newPlot('line', data, layout)
+        Plotly.newPlot('line', traces, layout)
     });
 };
 

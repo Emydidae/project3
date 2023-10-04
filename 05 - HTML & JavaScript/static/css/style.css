@@ -48,8 +48,22 @@ h2 {
   float: left;
 }
 
+.legend {
+  line-height: 18px;
+  color: #302D2D;
+  background-color: aliceblue;
+ }
+
+ .legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 1;
+ }
+
 #info {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 ul {
