@@ -170,7 +170,7 @@ function make_rain_bar(year) {
         }];
         // give name
         let layout = {
-            title: `Monthly Average Precipitation in CA - ${year}`
+            title: `Monthly Avg Precipitation in CA - ${year}`
         };
         // make chart
         Plotly.newPlot('rain_bar', trace1, layout);
@@ -181,12 +181,8 @@ function make_rain_bar(year) {
 function make_fire_bars(year) {
     // make url & call for data
     let url = `http://127.0.0.1:5000/fire_bar/${year}`
-        // make trace with x being the month and 2 different y axes - avg acres burned and number of fires
-                // https://plotly.com/javascript/bar-charts/
-                // https://plotly.com/javascript/multiple-axes/ - some resources on how to do multiple bars
     d3.json(url).then(data => {
         // make trace for y axis 1
-
         let trace1 = {
             x: data.map(item => {return item.month}),
             y: data.map(item => {return item.avg_acres_burned}),
@@ -196,7 +192,7 @@ function make_fire_bars(year) {
               color: '#d94801'
             }
         };
-          
+        // make trace for y axis 2          
         let trace2 = {
             x: data.map(item => {return item.month}),
             y: data.map(item => {return item.num_of_fires}),
@@ -206,15 +202,14 @@ function make_fire_bars(year) {
               color: '#d94801'
             }
         };
-          
+        // set titles
         let layout = {
-            title: `Monthly Average Acres Burned in CA - ${year}`
+            title: `Monthly Avg Acres Burned in CA - ${year}`
         };
-          
         let layout2 = {
-            title: `Monthly Number of Fires in CA - ${year}`
+            title: `Monthly # of Fires in CA - ${year}`
         };
-          
+        // make plots
         Plotly.newPlot('fire_bar1', [trace1], layout);
         Plotly.newPlot('fire_bar2', [trace2], layout2);
     });
@@ -223,7 +218,23 @@ function make_fire_bars(year) {
 // LINE ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function make_line() {
-    console.log('hi')
+    // make url and call for data
+    // can uncomment the console log at the top to print this data to console for you to reference
+    let url = 'http://127.0.0.1:5000/month_line'
+    d3.json(url).then(data => {
+        // make trace for each of the 3 arrays for the line graph
+        // use the map function to get month data for x and the specific data point for y
+        // since some will have gaps in the data, make sure to set connectgaps to false (see https://plotly.com/javascript/line-charts/#connect-gaps-between-data)
+        trace1 = {}
+        trace2 = {}
+        trace3 = {}
+        data = [trace1, trace2, trace3]
+        // make a single layout variable with info for each y axis (https://plotly.com/javascript/multiple-axes/)
+        // you don't need all the info from that for each axis, but you should make sure to give a title and say which side the axis should appear on (rain info on left, fire stuff on the right)
+        layout = {}
+        // make graph
+        Plotly.newPlot('line', data, layout)
+    });
 };
 
 // DROPDOWN FUNCTIONALITY ----------------------------------------------------------------------------------------------------------------------------------------------------

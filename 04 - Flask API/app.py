@@ -317,7 +317,7 @@ def month_line():
         for item in rain_data:
             avg_rain.append({
                 'avg_rainfall': item['avg_rainfall'],
-                'month': item['month'],
+                'month': f"{item['month']} {yr}",
                 'month_num': item['month_num'],
                 'year': yr
             })
@@ -325,13 +325,13 @@ def month_line():
         for item in fire_data:
             avg_fire.append({
                 'avg_acres_burned': item['avg_acres_burned'],
-                'month': item['month'],
+                'month': f"{item['month']} {yr}",
                 'month_num': item['month_num'],
                 'year': yr
             })
             fire_counts.append({
                 'num_of_fires': item['num_of_fires'],
-                'month': item['month'],
+                'month': f"{item['month']} {yr}",
                 'month_num': item['month_num'],
                 'year': yr
             })
