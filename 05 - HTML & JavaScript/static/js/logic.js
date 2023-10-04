@@ -266,7 +266,7 @@ function make_line() {
             text: fire_counts.map(item => {return 'Fires'}),
             name: '# of Fires',
             type: 'scatter',
-            yaxis: 'y2',
+            yaxis: 'y3',
             connectgaps: false
         };
         let traces = [trace1, trace2, trace3];
@@ -288,7 +288,7 @@ function make_line() {
                 anchor: 'free',
                 overlaying: 'y',
                 side: 'right',
-                position: 0.15
+                position: 1
             }
         };
        
