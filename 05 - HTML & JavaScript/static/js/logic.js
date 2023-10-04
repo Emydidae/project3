@@ -225,13 +225,64 @@ function make_line() {
         // make trace for each of the 3 arrays for the line graph
         // use the map function to get month data for x and the specific data point for y
         // since some will have gaps in the data, make sure to set connectgaps to false (see https://plotly.com/javascript/line-charts/#connect-gaps-between-data)
-        trace1 = {}
-        trace2 = {}
+        trace1 = {let trace1 = [{
+            x: data.map(item => {return item.month}),
+            y: data.map(item => {return item.avg_rainfall}),
+            text: data.map(item => {return `Inches`}),
+            type: 'line',}
+
+        trace2 = {let trace2 = {
+            x: data.map(item => {return item.month}),
+            y: data.map(item => {return item.num_of_fires}),
+            name: 'Fires',
+            type: 'bar',
+            marker: {
+              color: 
+            };
+
         trace3 = {}
         data = [trace1, trace2, trace3]
         // make a single layout variable with info for each y axis (https://plotly.com/javascript/multiple-axes/)
         // you don't need all the info from that for each axis, but you should make sure to give a title and say which side the axis should appear on (rain info on left, fire stuff on the right)
-        layout = {}
+
+
+        layout = {title: `Monthly # of Fires in CA - ${year}`},
+
+        yaxis: {
+
+            title: ‘of precipitation’,
+        
+             },
+        
+          yaxis2: {
+        
+            title: ‘Of Fires’,
+        
+            anchor: 'free',
+        
+            overlaying: 'y',
+        
+            side: 'left',
+        
+            position: 0.15
+        
+          },
+        
+          yaxis3: {
+        
+            title: ‘acres Burned’,
+        
+            anchor: 'free',
+        
+            overlaying: 'y',
+        
+            side: 'left',
+        
+            position: 0.15
+        
+          },
+       
+       
         // make graph
         Plotly.newPlot('line', data, layout)
     });
