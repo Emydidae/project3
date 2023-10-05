@@ -2,7 +2,7 @@
 // d3.json('http://127.0.0.1:5000/map_markers/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/rain_bar/2017').then(data => {console.log(data);});
 // d3.json('http://127.0.0.1:5000/fire_bar/2017').then(data => {console.log(data);});
-d3.json('http://127.0.0.1:5000/month_line').then(data => {console.log(data);});
+// d3.json('http://127.0.0.1:5000/month_line').then(data => {console.log(data);});
 
 // MAPS ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -154,7 +154,7 @@ function make_maps(year) {
         for (let i = 0; i < grades.length; i++) {
             div.innerHTML +=
             '<i style="background:' + rain_color(grades[i] + 1) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '%<br>' : '%+');
             }
             return div;
         };
@@ -247,7 +247,10 @@ function make_line() {
             y: prcp.map(item => {return item.avg_rainfall}),
             text: prcp.map(item => {return `Inches`}),
             name: 'Avg. Precipitation',
-            type: 'scatter'
+            mode: 'lines',
+            marker: {
+                color: '#2171B5'
+            }
         };
         let fire_acres = data.avg_fire
         let trace2 = {
@@ -255,9 +258,11 @@ function make_line() {
             y: fire_acres.map(item => {return item.avg_acres_burned}),
             text: fire_acres.map(item => {return 'Average Acres Burned'}),
             name: 'Avg. Acres Burned',
-            type: 'scatter',
+            mode: 'lines',
             yaxis: 'y2',
-            connectgaps: false
+            marker: {
+                color: '#d91a01'
+            }
         };
         let fire_counts = data.fire_counts
         let trace3 = {
@@ -265,26 +270,53 @@ function make_line() {
             y: fire_counts.map(item => {return item.num_of_fires}),
             text: fire_counts.map(item => {return 'Fires'}),
             name: '# of Fires',
-            type: 'scatter',
+            mode: 'lines',
             yaxis: 'y3',
-            connectgaps: false
+            marker: {
+                color: '#d98301'
+            }
         };
         let traces = [trace1, trace2, trace3];
 
         // make a single layout variable with info for each y axis (https://plotly.com/javascript/multiple-axes/)
         // you don't need all the info from that for each axis, but you should make sure to give a title and say which side the axis should appear on (rain info on left, fire stuff on the right)
-        let layout = {title: 'Monthly Precipitation and Wildfire Trends (2013-2019)',
+        let layout = {
+            title: 'Monthly Precipitation and Wildfire Trends (2013-2019)',
+            xaxis: {
+                tickvals: ['Jan 2013', 'May 2013', 'Sep 2013',
+                           'Jan 2014', 'May 2014', 'Sep 2014',
+                           'Jan 2015', 'May 2015', 'Sep 2015',
+                           'Jan 2016', 'May 2016', 'Sep 2016',
+                           'Jan 2017', 'May 2017', 'Sep 2017',
+                           'Jan 2018', 'May 2018', 'Sep 2018',
+                           'Jan 2019', 'May 2019', 'Sep 2019'],
+                ticktext: ["Jan '13", "May '13", "Sep '13",
+                           "Jan '14", "May '14", "Sep '14",
+                           "Jan '15", "May '15", "Sep '15",
+                           "Jan '16", "May '16", "Sep '16",
+                           "Jan '17", "May '17", "Sep '17",
+                           "Jan '18", "May '18", "Sep '18",
+                           "Jan '19", "May '19", "Sep '19"],
+                tickangle: 300,
+                domain: [0.0, 0.95]
+            },
             yaxis: {
                 title: 'Avg. Precipitation',
+                titlefont: {color: '#2171B5'},
+                tickfont: {color: '#2171B5'},
             },
             yaxis2: {
                 title: 'Avg. Acres Burned',
+                titlefont: {color: '#d91a01'},
+                tickfont: {color: '#d91a01'},
                 anchor: 'x',
                 overlaying: 'y',
                 side: 'right'
             },
             yaxis3: {
                 title: '# of Fires',
+                titlefont: {color: '#d98301'},
+                tickfont: {color: '#d98301'},
                 anchor: 'free',
                 overlaying: 'y',
                 side: 'right',
