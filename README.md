@@ -14,6 +14,7 @@ https://docs.google.com/document/d/1EbH2bQ_-GGIEymq9qHdc8dFXurmZHvXkJpHnP-el3ns/
 ### Sources:
 - https://cdec.water.ca.gov/
 - https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv
+	- https://www.fire.ca.gov/incidents/
 - https://leaflet-extras.github.io/leaflet-providers/preview/ - used for leaflet maps
 - https://colorbrewer2.org/ - used for color-coding markers
 - https://leafletjs.com/examples/choropleth/ - used for color-coding markers
