@@ -8,14 +8,14 @@
 - Does a wet winter lead to a worse fire season in drought-affected areas?
 - Using data from the past years, can we predict what wildfire activity will look like this year or next year in California?
 
-#### Running the Site
+### Running the Site
 - Make sure app.py (folder 04) is running.
 - Open index.html (folder 05).
 
-#### Project Overview
+### Project Overview
 https://docs.google.com/document/d/1EbH2bQ_-GGIEymq9qHdc8dFXurmZHvXkJpHnP-el3ns/
 
-#### Sources:
+### Sources:
 - https://cdec.water.ca.gov/
 - https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv
 	- https://www.fire.ca.gov/incidents/
