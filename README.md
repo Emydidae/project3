@@ -14,7 +14,7 @@
 
 ### Sources:
 #### Precipitation Data:
-- https://cdec.water.ca.gov/
+- https://cdec.water.ca.gov/ (links to specific tables in webscraping code)
 
 #### Wildfire Data:
 - https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv
